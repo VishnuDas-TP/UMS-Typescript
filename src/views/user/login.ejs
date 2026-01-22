@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Login</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f4f6fb;
+    }
+
+    .login-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      padding: 35px 30px;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header .icon {
+      width: 70px;
+      height: 70px;
+      background: #e8edff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 15px;
+      color: #4f46e5;
+      font-size: 28px;
+    }
+
+    .login-header h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #222;
+    }
+
+    .login-header p {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    .input-box {
+      position: relative;
+    }
+
+    .input-box i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px 12px 12px 38px;
+      border-radius: 8px;
+      border: 1px solid #dcdcdc;
+      font-size: 14px;
+    }
+
+    .input-box input:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      background: #4f46e5;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: #4338ca;
+    }
+
+    .extra-links {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+    }
+
+    .extra-links a {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+
+<body>
+
+  <div class="login-container">
+    <div class="login-header">
+      <div class="icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <h2>User Login</h2>
+      <p>Enter your credentials to access your account</p>
+    </div>
+
+    <form onsubmit="login(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <div class="input-box">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-box">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+    </form>
+
+    <div class="extra-links">
+      <p>Don’t have an account? <a href="/signup">Sign up</a></p>
+    </div>
+  </div>
+
+<script>
+function login(event) {
+  event.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      swal({
+        title: "Success",
+        text: data.message,
+        icon: "success",
+        timer: 1500,
+        buttons: false
+      }).then(() => {
+        window.location.href = data.redirectUrl;
+      });
+    } else {
+      swal("Login Failed", data.message, "error");
+    }
+  })
+  .catch(() => {
+    swal("Error", "Something went wrong. Please try again.", "error");
+  });
+}
+</script>
+
+</body>
+</html>
